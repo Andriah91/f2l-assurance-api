@@ -39,8 +39,10 @@ Route::post('users/email/{id}', [UserController::class, 'updateEmail']);
 Route::post('users/password/{id}', [UserController::class, 'updatePassword']);
 Route::get('clients', [UserController::class, 'findAllClients']);
 Route::get('clientInfo/{id}', [UserController::class, 'getDetailsClient']);
+Route::post('search', [UserController::class, 'searchUser']);
 
 Route::get('send-email', [SendEmailController::class, 'index']);
+Route::post('sendemail', [SendEmailController::class, 'sendEmail']);
 
 Route::get('contrats/{id}', [ContratController::class, 'index']);
 Route::post('contrats', [ContratController::class, 'store']);
@@ -57,6 +59,16 @@ Route::post('login', [AuthController::class,'login']);
 Route::post('logout', [AuthController::class,'logout']);
 Route::post('refresh', [AuthController::class,'refresh']);
 Route::post('checkToken', [AuthController::class,'checkToken']);
+Route::post('logCli', [AuthController::class,'loginClient']);
+Route::post('validateLog', [AuthController::class,'validateLogin']);
+Route::post('registerCli', [AuthController::class,'registerClient']);
+Route::post('validateReg', [AuthController::class,'validateRegister']);
+
+
+Route::post('optCode', [OtpController::class,'sendOtpCode']);
+Route::post('verifyCode', [OtpController::class,'verifyOTP']);
+
+
 
 
 

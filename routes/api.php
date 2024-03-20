@@ -13,7 +13,6 @@ use App\Http\Controllers\DocumentController;
 
 use Illuminate\Support\Facades\Cache;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -39,7 +38,8 @@ Route::post('users/email/{id}', [UserController::class, 'updateEmail']);
 Route::post('users/password/{id}', [UserController::class, 'updatePassword']);
 Route::get('clients', [UserController::class, 'findAllClients']);
 Route::get('clientInfo/{id}', [UserController::class, 'getDetailsClient']);
-Route::post('search', [UserController::class, 'searchUser']);
+Route::post('searchUser', [UserController::class, 'searchUser']);
+Route::post('searchAdmin', [UserController::class, 'searchAdmin']);
 
 Route::get('send-email', [SendEmailController::class, 'index']);
 Route::post('sendemail', [SendEmailController::class, 'sendEmail']);
@@ -55,6 +55,7 @@ Route::delete('documents/{id}', [DocumentController::class, 'destroy']);
 Route::get('documents/{id}', [DocumentController::class, 'getByContrat']);
 
 Route::post('register', [AuthController::class, 'register']);
+Route::post('registerClient', [AuthController::class, 'registerClientBO']);
 Route::post('login', [AuthController::class,'login']);
 Route::post('logout', [AuthController::class,'logout']);
 Route::post('refresh', [AuthController::class,'refresh']);

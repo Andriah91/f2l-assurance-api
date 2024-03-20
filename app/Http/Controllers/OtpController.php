@@ -7,8 +7,6 @@ use Twilio\Rest\Client;
 class OtpController extends Controller
 {
 
-
-
   /**
      * Display a listing of the resource.
      *

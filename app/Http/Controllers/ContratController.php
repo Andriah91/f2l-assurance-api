@@ -12,12 +12,10 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 class ContratController extends Controller
 {
 
-   /* public function __construct( Request $request)
+   public function __construct( Request $request)
     {
-        if($request->bearerToken()) {
-            $this->middleware('auth:api');
-        }
-    }*/
+        $this->middleware('auth:api');
+    }
 
     public function index($id)
     {
@@ -29,9 +27,6 @@ class ContratController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-
-
 
     /**
      * Store a newly created resource in storage.

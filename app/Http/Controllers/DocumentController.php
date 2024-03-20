@@ -13,12 +13,10 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 class DocumentController extends Controller
 {
 
-   /* public function __construct( Request $request)
+    public function __construct( Request $request)
     {
-        if($request->bearerToken()) {
-            $this->middleware('auth:api');
-        }
-    }*/
+        $this->middleware('auth:api');
+    }
 
     /**
      * Store a newly created resource in storage.

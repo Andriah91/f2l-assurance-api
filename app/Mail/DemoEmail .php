@@ -16,10 +16,5 @@ class DemoEmail extends Mailable
         $this->message = $message;
     }
 
-    public function build()
-    {
-        return $this->from('playbazik@example.com', 'Playbaka')
-                    ->subject('Sujet de email')
-                    ->view('welcome');
-    }
+
 }

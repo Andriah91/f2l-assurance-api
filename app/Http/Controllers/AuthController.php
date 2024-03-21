@@ -111,7 +111,8 @@ class AuthController extends Controller
     public function validateRegister(Request $request)
     {
         try {
-            $phoneNumber = $request->phone;
+            $phonePrefix = env('PHONE_PREFIX');
+            $phoneNumber =$phonePrefix . $request->phone ;
             $otp = $request->opt_code;
 
             $twilioSid = getenv("TWILIO_SID");
@@ -215,7 +216,8 @@ public function validateLogin(Request $request)
 {
     try {
     $otp = $request->opt_code;
-    $phoneNumber=$request->phone;
+    $phonePrefix = env('PHONE_PREFIX');
+    $phoneNumber =$phonePrefix . $request->phone;
     $credentials = $request->only('registration_number', 'phone');
     $credentials['password']="client";
     $token = Auth::attempt($credentials);

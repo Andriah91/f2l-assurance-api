@@ -1,0 +1,13 @@
+-composer install
+
+-php artisan storage:link
+
+-create twilio config: 
+
+
+-controle numero de telephone , tsy asina +33 am bdd
+-fafaina le parametre am sisiny-->ok
+-form control anle documents-->ok
+-auth client tsisy idiran mdp fa tode contact-->ok
+-registration number tode atao is_valide -->ok
+-

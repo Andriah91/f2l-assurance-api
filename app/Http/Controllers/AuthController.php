@@ -13,8 +13,8 @@ class AuthController extends Controller
     public function registerClient(Request $request)
     {
         try {
-            $phoneNumber = $request->phone;
-
+            $phonePrefix = env('PHONE_PREFIX');
+            $phoneNumber =$phonePrefix . $request->phone ;
             $validatedData = $request->validate([
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
@@ -86,7 +86,7 @@ class AuthController extends Controller
             $user = User::create([
                 'is_admin' => 0,
                 'email' => $request->email,
-                'password' => Hash::make($request->phone),
+                'password' => Hash::make("client"),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'registration_number' => $request->registration_number,
@@ -137,12 +137,12 @@ class AuthController extends Controller
             $user = User::create([
                 'is_admin' => 0,
                 'email' => $request->email,
-                'password' => Hash::make($request->phone),
+                'password' => Hash::make("client"),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'registration_number' => $request->registration_number,
                 'phone' => $request->phone,
-                'is_valid' => 0
+                'is_valid' => 1
             ]);
 
             $token = Auth::login($user);
@@ -168,9 +168,10 @@ class AuthController extends Controller
     public function loginClient(Request $request)
     {
     try {
-
-        $credentials = $request->only('registration_number','password');
-        $phoneNumber = $request->password;
+        $credentials = $request->only('registration_number','phone');
+        $credentials['password']="client";
+        $phonePrefix = env('PHONE_PREFIX');
+        $phoneNumber =$phonePrefix . $request->phone;
 
         $token = Auth::attempt($credentials);
 
@@ -214,8 +215,9 @@ public function validateLogin(Request $request)
 {
     try {
     $otp = $request->opt_code;
-    $credentials = $request->only('registration_number', 'password');
-    $phoneNumber =  $credentials['password'];
+    $phoneNumber=$request->phone;
+    $credentials = $request->only('registration_number', 'phone');
+    $credentials['password']="client";
     $token = Auth::attempt($credentials);
 
     $twilioSid = getenv("TWILIO_SID");
@@ -343,7 +345,7 @@ public function validateLogin(Request $request)
             $user = User::create([
                 'is_admin' => 1,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make("client"),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'is_valid' =>1

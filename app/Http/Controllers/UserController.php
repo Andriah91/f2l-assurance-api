@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
-   /* public function __construct()
+    public function __construct()
     {
         $this->middleware('auth:api');
-    }*/
+    }
 
     /**
      * Display a listing of the resource.
@@ -75,7 +75,7 @@ class UserController extends Controller
 
                 if ($param) {
                     $users->where(function ($query) use ($param) {
-                        $query->where('email', 'like', "%$param%")
+                        $query->where('phone', 'like', "%$param%")
                         ->orWhere('first_name', 'like', "%$param%")
                         ->orWhere('registration_number', 'like', "%$param%")
                         ->orWhere('last_name', 'like', "%$param%");
@@ -84,6 +84,31 @@ class UserController extends Controller
                     });
 
                 }
+            $users->where('is_admin', 0);
+            $users->orderBy('id', 'desc');
+            $userCount = $users->count();
+            $users = $users->skip($offset)->take($limit)->get();
+            return response()->json(['status' => 'success', 'users' => $users, 'userCount' => $userCount]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    public function searchAdmin(Request $request)
+    {
+        try {
+            $param = $request->input('key');
+            $offset = $request->input('offset');
+            $limit = $request->input('limit');
+            $users = User::with('contrats');
+
+                if ($param) {
+                    $users->where(function ($query) use ($param) {
+                        $query->where('email', 'like', "%$param%")
+                        ->orWhere('first_name', 'like', "%$param%")
+                        ->orWhere('last_name', 'like', "%$param%");
+                    });
+                }
+            $users->where('is_admin', 1);
             $users->orderBy('id', 'desc');
             $userCount = $users->count();
             $users = $users->skip($offset)->take($limit)->get();

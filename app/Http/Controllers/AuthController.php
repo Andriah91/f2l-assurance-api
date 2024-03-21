@@ -8,10 +8,7 @@ use Twilio\Rest\Client;
 
 class AuthController extends Controller
 {
-   /* public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
-    }*/
+
 
     public function registerClient(Request $request)
     {
@@ -46,6 +43,60 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Envoi code otp pour inscription',
+                'user' => $user
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            $firstError = $exception->validator->getMessageBag()->first();
+            return response()->json(['error' => $firstError], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function registerClientBO(Request $request)
+    {
+        try {
+            $phoneNumber = $request->phone;
+
+            $request->validate([
+                'email' => 'required|string|email|max:255|unique:users',
+                'phone' => 'required|string|unique:users',
+                'first_name' => 'required|string|min:3',
+                'last_name' => 'required|string|max:255'
+            ], [
+                'email.required' => 'Le champ email est requis.',
+                'email.email' => 'L\'email doit être une adresse email valide.',
+                'email.unique' => 'L\'adresse email est déjà utilisée.',
+                'phone.unique' => 'Le numéro de téléphone est déjà utilisé.',
+                'first_name.required' => 'Le champ prénom est requis.',
+                'first_name.min' => 'Le nom doit contenir au moins :min caractères.',
+                'last_name.required' => 'Le champ nom est requis.',
+                'last_name.min' => 'Le prénom doit avoir au moins :min caractères.'
+            ]);
+
+            $user  = [
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'registration_number' =>  $request->registration_number,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+            ];
+
+            $user = User::create([
+                'is_admin' => 0,
+                'email' => $request->email,
+                'password' => Hash::make($request->phone),
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'registration_number' => $request->registration_number,
+                'phone' => $request->phone,
+                'is_valid' => 0
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User created successfully',
                 'user' => $user
             ]);
 
@@ -131,6 +182,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        if (!$user || !$user->is_valid) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Numéro de téléphone ou enregistrement invalide*',
+            ], 401);
+        }
+
 
         $twilioSid = getenv("TWILIO_SID");
         $twilioToken = getenv("TWILIO_AUTH_TOKEN");
@@ -229,6 +287,12 @@ public function validateLogin(Request $request)
         }
 
         $user = Auth::user();
+        if (!$user || !$user->is_admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mot de passe ou email invalide',
+            ], 401);
+        }
         $data= [
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
@@ -277,14 +341,12 @@ public function validateLogin(Request $request)
                 ]);
 
             $user = User::create([
-                'is_admin' => $request->is_admin,
+                'is_admin' => 1,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
-                'registration_number' => $request->registration_number,
-                'phone' => $request->phone,
-                'is_valid' => $request->is_valid
+                'is_valid' =>1
             ]);
 
             $token = Auth::login($user);

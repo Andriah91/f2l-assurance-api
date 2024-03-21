@@ -10,6 +10,12 @@ use Illuminate\Http\Request;
 
 class SendEmailController extends Controller
 {
+
+    public function __construct( Request $request)
+    {
+        $this->middleware('auth:api');
+    }
+
      public function index(Request $request)
     {
 
@@ -31,7 +37,7 @@ class SendEmailController extends Controller
         return response()->json(['error' => $e->getMessage()], 500);
         }
 
-        
+
 
   // try{
         //     $recipient = 'playbazik@gmail.com';

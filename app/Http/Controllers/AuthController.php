@@ -13,8 +13,8 @@ class AuthController extends Controller
     public function registerClient(Request $request)
     {
         try {
-            $phonePrefix = env('PHONE_PREFIX');
-            $phoneNumber =$phonePrefix . $request->phone ;
+            
+            $phoneNumber = $this->_setPhonePrefix($request->phone);
             $validatedData = $request->validate([
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
@@ -111,7 +111,7 @@ class AuthController extends Controller
     public function validateRegister(Request $request)
     {
         try {
-            $phoneNumber = $request->phone;
+            $phoneNumber = $this->_setPhonePrefix($request->phone);
             $otp = $request->opt_code;
 
             $twilioSid = getenv("TWILIO_SID");
@@ -170,8 +170,7 @@ class AuthController extends Controller
     try {
         $credentials = $request->only('registration_number','phone');
         $credentials['password']="client";
-        $phonePrefix = env('PHONE_PREFIX');
-        $phoneNumber =$phonePrefix . $request->phone;
+        $phoneNumber = $this->_setPhonePrefix($request->phone);
 
         $token = Auth::attempt($credentials);
 
@@ -215,7 +214,7 @@ public function validateLogin(Request $request)
 {
     try {
     $otp = $request->opt_code;
-    $phoneNumber=$request->phone;
+    $phoneNumber = $this->_setPhonePrefix($request->phone);
     $credentials = $request->only('registration_number', 'phone');
     $credentials['password']="client";
     $token = Auth::attempt($credentials);
@@ -345,7 +344,7 @@ public function validateLogin(Request $request)
             $user = User::create([
                 'is_admin' => 1,
                 'email' => $request->email,
-                'password' => Hash::make("client"),
+                'password' => Hash::make($request->password),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'is_valid' =>1
@@ -402,5 +401,14 @@ public function validateLogin(Request $request)
         catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    private function _setPhonePrefix($phone){
+        $phonePrefix = env('PHONE_PREFIX');
+        if(!str_contains($phone, $phonePrefix)){
+            $phone = $phonePrefix . $phone;
+        }
+
+        return $phone;
     }
 }

@@ -2,6 +2,10 @@
 /public/build
 /public/hot
 /vendor
+/public/storage
+/storage/app/
+/storage/framework/
+/storage/logs/
 .env
 .env.backup
 .env.production

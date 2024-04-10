@@ -11,10 +11,10 @@ use Illuminate\Http\Request;
 class SendEmailController extends Controller
 {
 
-    public function __construct( Request $request)
-    {
-        $this->middleware('auth:api');
-    }
+    // public function __construct( Request $request)
+    // {
+    //     $this->middleware('auth:api');
+    // }
 
      public function index(Request $request)
     {
@@ -51,7 +51,6 @@ class SendEmailController extends Controller
     }
     public function sendEmail(Request $request)
     {
-        // Validez les données du formulaire
         $mailToAddress = env('MAIL_TO_ADDRESS');
         $request->validate([
             'nom' => 'required|string',

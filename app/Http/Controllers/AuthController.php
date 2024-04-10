@@ -15,13 +15,25 @@ class AuthController extends Controller
         try {
             $phonePrefix = env('PHONE_PREFIX');
             $phoneNumber =$phonePrefix . $request->phone ;
+
             $validatedData = $request->validate([
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
                 'registration_number' => 'required|unique:users,registration_number',
                 'first_name' => 'required',
                 'last_name' => 'required'
+            ],[
+                'email.required' => 'Le champ email est requis.',
+                'email.email' => 'L\'email doit être une adresse email valide.',
+                'email.unique' => 'L\'adresse email est déjà utilisée.',
+                'registration_number.unique' => 'Numéro d\'enregistrement est déjà utilisée.',
+                'phone.unique' => 'Le numéro de téléphone est déjà utilisé.',
+                'first_name.required' => 'Le champ prénom est requis.',
+                'first_name.min' => 'Le nom doit contenir au moins :min caractères.',
+                'last_name.required' => 'Le champ nom est requis.',
+                'last_name.min' => 'Le prénom doit avoir au moins :min caractères.'
             ]);
+
 
             $user  = [
                 'email' => $validatedData['email'],
@@ -275,11 +287,6 @@ public function validateLogin(Request $request)
 
     public function login(Request $request)
     {
-       try{
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
         $credentials = $request->only('email', 'password');
         $phoneNumber=$request->password;
         $token = Auth::attempt($credentials);
@@ -311,9 +318,6 @@ public function validateLogin(Request $request)
                     'type' => 'bearer',
                 ]
             ]);
-       }catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-        }
     }
 
 
@@ -325,7 +329,7 @@ public function validateLogin(Request $request)
      */
     public function register(Request $request)
     {
-        try {
+       // try {
 
                 $request->validate([
                     'email' => 'required|string|email|max:255|unique:users',
@@ -347,7 +351,7 @@ public function validateLogin(Request $request)
             $user = User::create([
                 'is_admin' => 1,
                 'email' => $request->email,
-                'password' => Hash::make("client"),
+                'password' => Hash::make($request->password),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'is_valid' =>1
@@ -365,12 +369,12 @@ public function validateLogin(Request $request)
                 ]
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $exception) {
-            $firstError = $exception->validator->getMessageBag()->first();
-            return response()->json(['error' => $firstError], 422);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // } catch (\Illuminate\Validation\ValidationException $exception) {
+        //     $firstError = $exception->validator->getMessageBag()->first();
+        //     return response()->json(['error' => $firstError], 422);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
     }
 
 

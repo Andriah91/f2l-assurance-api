@@ -21,12 +21,18 @@ class ContratController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $contrats = Contrat::where('user_id', $id)->with('documents')->get();
+            $contrats = Contrat::where('user_id', $id)
+                                ->with(['documents' => function ($query) {
+                                    $query->orderBy('id', 'desc');
+                                }])
+                               ->orderBy('id', 'desc')
+                               ->get();
             return response()->json(['status' => 'success', 'contrats' => $contrats ,'user'=>$user]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.

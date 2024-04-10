@@ -181,6 +181,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Berkayk\OneSignal\OneSignalServiceProvider::class,
+       // Ladumor\OneSignal\OneSignalServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -210,6 +212,9 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
+       // 'OneSignal' => \Ladumor\OneSignal\OneSignal::class,
+
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 

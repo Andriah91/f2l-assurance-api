@@ -78,15 +78,16 @@ class NotificationController extends Controller
     public function sendNotification(Request $request)
     {
         $client = new Client();
-
+        $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
+        $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');
         try {
             $response = $client->post('https://api.onesignal.com/notifications', [
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Basic OGI4ZDk5NjYtMmYzOC00MjA4LWFhM2QtNWI4ZjU5OWQzMmI3',
+                    'Authorization' => 'Basic ' . $oneSignalAuthorize,
                 ],
                 'json' => [
-                    'app_id' => 'eab9904b-40af-400c-8207-580816f9db6b',
+                    'app_id' => $oneSignalAppId,
                     'included_segments' => ['Subscribed Users'],
                     'contents' => [
                         'en' => 'Test notification message'

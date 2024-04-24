@@ -72,7 +72,7 @@ class UserController extends Controller
             $offset = $request->input('offset');
             $limit = $request->input('limit');
             $users = User::with('contrats');
-
+            
                 if ($param) {
                     $users->where(function ($query) use ($param) {
                         $query->where('phone', 'like', "%$param%")

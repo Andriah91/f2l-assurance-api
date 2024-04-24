@@ -9,7 +9,7 @@ use App\Http\Controllers\SendEmailController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ContratController;
 use App\Http\Controllers\DocumentController;
-
+use App\Http\Controllers\NotificationController ;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -41,6 +41,13 @@ Route::get('clientInfo/{id}', [UserController::class, 'getDetailsClient']);
 Route::post('searchUser', [UserController::class, 'searchUser']);
 Route::post('searchAdmin', [UserController::class, 'searchAdmin']);
 
+Route::post('pushNotif', [NotificationController::class, 'sendNotification']);
+Route::post('searchNotif', [NotificationController::class, 'searchNotification']);
+Route::post('notifications', [NotificationController::class, 'store']);
+Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
+Route::post('notifications/info', [NotificationController::class, 'updateInfo']);
+
+
 Route::get('send-email', [SendEmailController::class, 'index']);
 Route::post('sendemail', [SendEmailController::class, 'sendEmail']);
 
@@ -51,6 +58,8 @@ Route::post('contrats/info', [ContratController::class, 'updateInfo']);
 
 Route::post('documents', [DocumentController::class, 'store']);
 Route::post('upload', [DocumentController::class, 'upload']);
+Route::post('uploadMobile', [DocumentController::class, 'uploadMobile']);
+
 Route::delete('documents/{id}', [DocumentController::class, 'destroy']);
 Route::get('documents/{id}', [DocumentController::class, 'getByContrat']);
 

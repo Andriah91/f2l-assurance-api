@@ -35,6 +35,33 @@ class DocumentController extends Controller
         }
     }
 
+    public function uploadMobile(Request $request)
+    {
+        try {
+            if ($request->hasFile('fichier')) {
+                $paths = [];
+                $path = "";
+                /*dd($request->file('fichier'));*/
+/*
+                foreach ($request->file('fichier') as $image) {
+                    $path = $image->store('public/filaka');
+                    $paths[] = $path;
+                }
+                */
+                $image = $request->file('fichier');
+                $path = $image->store('filaka', 'public');
+
+                $extension = $image->getClientOriginalExtension();
+
+                return response()->json(['message' => 'success', 'paths' => $paths,'path'=> $path,'ext'=>$extension]);
+            } else {
+                return response()->json(['error' => 'Aucune image trouvée dans la requête.'], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function upload(Request $request)
     {
         try {

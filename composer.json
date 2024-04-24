@@ -6,11 +6,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "berkayk/onesignal-laravel": "^2.1",
         "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "onesignal/onesignal-php-api": "*@dev",
         "php-open-source-saver/jwt-auth": "^2.1",
         "twilio/sdk": "^7.16"
     },
@@ -64,5 +66,11 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/OneSignal/onesignal-php-api.git"
+        }
+      ]
 }

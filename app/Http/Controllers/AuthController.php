@@ -13,15 +13,27 @@ class AuthController extends Controller
     public function registerClient(Request $request)
     {
         try {
-            
-            $phoneNumber = $this->_setPhonePrefix($request->phone);
+            $phonePrefix = env('PHONE_PREFIX');
+            $phoneNumber =$phonePrefix . $request->phone ;
+
             $validatedData = $request->validate([
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
                 'registration_number' => 'required|unique:users,registration_number',
                 'first_name' => 'required',
                 'last_name' => 'required'
+            ],[
+                'email.required' => 'Le champ email est requis.',
+                'email.email' => 'L\'email doit être une adresse email valide.',
+                'email.unique' => 'L\'adresse email est déjà utilisée.',
+                'registration_number.unique' => 'Numéro d\'enregistrement est déjà utilisée.',
+                'phone.unique' => 'Le numéro de téléphone est déjà utilisé.',
+                'first_name.required' => 'Le champ prénom est requis.',
+                'first_name.min' => 'Le nom doit contenir au moins :min caractères.',
+                'last_name.required' => 'Le champ nom est requis.',
+                'last_name.min' => 'Le prénom doit avoir au moins :min caractères.'
             ]);
+
 
             $user  = [
                 'email' => $validatedData['email'],
@@ -111,7 +123,8 @@ class AuthController extends Controller
     public function validateRegister(Request $request)
     {
         try {
-            $phoneNumber = $this->_setPhonePrefix($request->phone);
+            $phonePrefix = env('PHONE_PREFIX');
+            $phoneNumber =$phonePrefix . $request->phone ;
             $otp = $request->opt_code;
 
             $twilioSid = getenv("TWILIO_SID");
@@ -214,7 +227,8 @@ public function validateLogin(Request $request)
 {
     try {
     $otp = $request->opt_code;
-    $phoneNumber = $this->_setPhonePrefix($request->phone);
+    $phonePrefix = env('PHONE_PREFIX');
+    $phoneNumber =$phonePrefix . $request->phone;
     $credentials = $request->only('registration_number', 'phone');
     $credentials['password']="client";
     $token = Auth::attempt($credentials);
@@ -272,11 +286,6 @@ public function validateLogin(Request $request)
 
     public function login(Request $request)
     {
-       try{
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
         $credentials = $request->only('email', 'password');
         $phoneNumber=$request->password;
         $token = Auth::attempt($credentials);
@@ -308,9 +317,6 @@ public function validateLogin(Request $request)
                     'type' => 'bearer',
                 ]
             ]);
-       }catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-        }
     }
 
 
@@ -322,7 +328,7 @@ public function validateLogin(Request $request)
      */
     public function register(Request $request)
     {
-        try {
+       // try {
 
                 $request->validate([
                     'email' => 'required|string|email|max:255|unique:users',
@@ -362,12 +368,12 @@ public function validateLogin(Request $request)
                 ]
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $exception) {
-            $firstError = $exception->validator->getMessageBag()->first();
-            return response()->json(['error' => $firstError], 422);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // } catch (\Illuminate\Validation\ValidationException $exception) {
+        //     $firstError = $exception->validator->getMessageBag()->first();
+        //     return response()->json(['error' => $firstError], 422);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
     }
 
 

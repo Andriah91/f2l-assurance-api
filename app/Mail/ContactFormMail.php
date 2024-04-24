@@ -34,5 +34,5 @@ class ContactFormMail extends Mailable
                     ->subject('DOCUMENT')
                     ->view('contact');
     }
-    
+
 }

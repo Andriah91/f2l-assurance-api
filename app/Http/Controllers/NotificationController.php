@@ -43,8 +43,10 @@ class NotificationController extends Controller
     public function store(Request $request)
     {
         try {
+
+
             $notif = new Notification();
-            $notif->createNotifiction($request->all());
+            $notif->createNotification($request->all());
             return response()->json(['status' => 'success', 'message' => 'Notification créé avec succès']);
         }catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -77,31 +79,52 @@ class NotificationController extends Controller
 
     public function sendNotification(Request $request)
     {
+        $title=$request->title;
+        $path=$request->path;
+        //$path="https://www.gala.fr/imgre/fit/~1~gal~2023~10~09~ea319e2e-a624-4e2a-b208-3b5f69444014.jpeg/2385x1849/quality/80/neymar.jpeg";
+        $message=$request->message;
+
         $client = new Client();
         $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
         $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');
+
         try {
+            $postData = [
+                'app_id' => $oneSignalAppId,
+                'included_segments' => ['All'],
+                'contents' => [
+                    'en' => $message,
+                    'fr' => $message
+                ]
+            ];
+
+            if ($path != "path") {
+                $postData['ios_attachments'] = array('id'. time() => $path);
+                $postData['big_picture'] = $path;
+            }
+
             $response = $client->post('https://api.onesignal.com/notifications', [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Basic ' . $oneSignalAuthorize,
                 ],
-                'json' => [
-                    'app_id' => $oneSignalAppId,
-                    'included_segments' => ['Subscribed Users'],
-                    'contents' => [
-                        'en' => 'Test notification message'
-                    ]
-                ]
+                'json' => $postData
             ]);
 
             $statusCode = $response->getStatusCode();
             $body = $response->getBody()->getContents();
+
+            if ($statusCode === 200) {
+                $notif = new Notification();
+                $notif->createNotification($request->all());
+            }
+
             return response()->json([
                 'status' => 'response',
                 'statusCode' => $statusCode,
                 'body' => $body
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

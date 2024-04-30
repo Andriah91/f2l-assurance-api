@@ -41,15 +41,8 @@ class DocumentController extends Controller
             if ($request->hasFile('fichier')) {
                 $paths = [];
                 $path = "";
-                /*dd($request->file('fichier'));*/
-/*
-                foreach ($request->file('fichier') as $image) {
-                    $path = $image->store('public/filaka');
-                    $paths[] = $path;
-                }
-                */
                 $image = $request->file('fichier');
-                $path = $image->store('filaka', 'public');
+                $path = $image->storeAS('filaka', 'public');
 
                 $extension = $image->getClientOriginalExtension();
 
@@ -68,7 +61,10 @@ class DocumentController extends Controller
             if ($request->hasFile('fichier')) {
                 $paths = [];
                 foreach ($request->file('fichier') as $image) {
-                    $path = $image->store('public/filaka');
+                    $oldname = $image->getClientOriginalName(); 
+                    $filename = time().'.'.$image->getClientOriginalExtension(); 
+                    $path = $image->storeAs('public/filaka', $filename);
+                    $path['oldname'] = $oldname;
                     $paths[] = $path;
                 }
                 return response()->json(['message' => 'success', 'paths' => $paths]);

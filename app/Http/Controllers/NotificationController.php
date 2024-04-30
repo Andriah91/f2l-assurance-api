@@ -123,7 +123,6 @@ class NotificationController extends Controller
                 'statusCode' => $statusCode,
                 'body' => $body
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

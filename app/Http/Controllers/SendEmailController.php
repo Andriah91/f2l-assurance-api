@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactFormMail;
+use App\Mail\FacturationFormMail;
 use App\Mail\SendMail;
 use App\Mail\DemoEmail;
 use Illuminate\Support\Facades\Mail;
@@ -11,47 +12,9 @@ use Illuminate\Http\Request;
 class SendEmailController extends Controller
 {
 
-    // public function __construct( Request $request)
-    // {
-    //     $this->middleware('auth:api');
-    // }
-
-     public function index(Request $request)
-    {
-
-        try{
-            $nom = $request->nom;
-            $email = $request->email;
-            $phone = $request->phone;
-            $message = $request->message;
-
-
-            $content = $nom . " (" . $email . ") : " . $message;
-
-            $recipient = 'tanjoniainadanie1309@gmail.com';
-            $subject = 'Document';
-            Mail::to($recipient)->send(new SendMail($recipient, $subject, $content));
-
-            return response()->json(['status' => 'success', 'message' => 'Email sent successfully']);
-          }catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-        }
-
-
-
-  // try{
-        //     $recipient = 'playbazik@gmail.com';
-        //     $message = 'Ceci est un message de test.';
-        //     Mail::to($recipient)->send(new SendMail($message));
-
-        //     return response()->json(['status' => 'success', 'message' => 'Email envoye']);
-        //   }catch (\Exception $e) {
-        // return response()->json(['error' => $e->getMessage()], 500);
-        // }
-    }
     public function sendEmail(Request $request)
     {
-        $mailToAddress = env('MAIL_TO_ADDRESS');
+        $mailToAddress = env('MAIL_FROM_ADDRESS');
         $request->validate([
             'nom' => 'required|string',
             'email' => 'required|email',
@@ -71,4 +34,28 @@ class SendEmailController extends Controller
 
         return response()->json(['message' => 'Email envoyé avec succès'], 200);
     }
+	
+	public function facturation(Request $request)
+	{
+		$request->validate([
+            'path' => 'required',
+            'titre' => 'required',
+            'user' => 'required',
+        ]);
+		$user = json_decode($request->user, true);
+		$emailData = [
+            'path' => $request->path,
+            'titre' => $request->titre,
+            'user' => $request->user,
+			'nom' => $user['first_name'].' '.$user['last_name'],
+            'email' => $user['email'],
+            'phone' => $user['phone'],
+        ];
+		
+		$mailToAddress = env('MAIL_FROM_ADDRESS');
+		
+		Mail::to($mailToAddress)->send(new FacturationFormMail($emailData));
+		
+        return response()->json(['message' => 'Email envoyé avec succès'], 200);
+	}
 }

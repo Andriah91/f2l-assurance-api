@@ -9,7 +9,8 @@ use App\Http\Controllers\SendEmailController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ContratController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\NotificationController ;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PublicitiesController;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -50,6 +51,7 @@ Route::post('notifications/info', [NotificationController::class, 'updateInfo'])
 
 Route::get('send-email', [SendEmailController::class, 'index']);
 Route::post('sendemail', [SendEmailController::class, 'sendEmail']);
+Route::post('facturation', [SendEmailController::class, 'facturation']);
 
 Route::get('contrats/{id}', [ContratController::class, 'index']);
 Route::post('contrats', [ContratController::class, 'store']);
@@ -62,6 +64,10 @@ Route::post('uploadMobile', [DocumentController::class, 'uploadMobile']);
 
 Route::delete('documents/{id}', [DocumentController::class, 'destroy']);
 Route::get('documents/{id}', [DocumentController::class, 'getByContrat']);
+
+Route::get('banieres', [PublicitiesController::class, 'showActive']);
+
+
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('registerClient', [AuthController::class, 'registerClientBO']);

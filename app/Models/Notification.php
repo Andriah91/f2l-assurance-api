@@ -14,7 +14,7 @@ class Notification extends Model
         'message'
     ];
 
-    public function createNotification($data)
+    public function createNotifiction($data)
     {
         return $this->create($data);
     }

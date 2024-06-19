@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ContactFormMail extends Mailable
+class FacturationFormMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,8 +31,8 @@ class ContactFormMail extends Mailable
     public function build()
     {
         return $this->from($this->emailData['email'], $this->emailData['nom'])
-                    ->subject('Contact')
-                    ->view('contact');
+                    ->subject('Demande de remboursement')
+					->view('remboursement');
     }
 
 }

@@ -228,7 +228,7 @@ public function validateLogin(Request $request)
     try {
     $otp = $request->opt_code;
     $phonePrefix = env('PHONE_PREFIX');
-    $phoneNumber =$phonePrefix . $request->phone;
+    $phoneNumber = $request->phone;
     $credentials = $request->only('registration_number', 'phone');
     $credentials['password']="client";
     $token = Auth::attempt($credentials);

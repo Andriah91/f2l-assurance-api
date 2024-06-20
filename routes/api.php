@@ -66,8 +66,11 @@ Route::delete('documents/{id}', [DocumentController::class, 'destroy']);
 Route::get('documents/{id}', [DocumentController::class, 'getByContrat']);
 
 Route::get('banieres', [PublicitiesController::class, 'showActive']);
-
-
+Route::post('searchPub', [PublicitiesController::class, 'searchPub']);
+Route::post('banieres', [PublicitiesController::class, 'store']);
+Route::delete('banieres/{id}', [PublicitiesController::class, 'destroy']);
+Route::get('banieres/{id}', [PublicitiesController::class, 'show']); 
+Route::post('banieres/info', [PublicitiesController::class, 'updateInfo']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('registerClient', [AuthController::class, 'registerClientBO']);

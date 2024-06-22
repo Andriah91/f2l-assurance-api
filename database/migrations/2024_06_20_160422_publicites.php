@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('publicities', function (Blueprint $table) {
             $table->id();
             $table->string('titre');
-            $table->string('link');
+            $table->string('link')->nullable();
             $table->string('path');
             $table->string('type');
             $table->boolean('is_active'); 

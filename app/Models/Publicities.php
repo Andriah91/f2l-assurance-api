@@ -10,13 +10,14 @@ class Publicities extends Model
     use SoftDeletes;
 	
 	protected $fillable = [
-        'title',
+        'titre',
         'link',
         'is_active',
 		'path',
 		'type'
     ];
 
+    
     public function createPublicity($data)
     {
         return $this->create($data);

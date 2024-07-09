@@ -41,8 +41,9 @@ Route::get('clients', [UserController::class, 'findAllClients']);
 Route::get('clientInfo/{id}', [UserController::class, 'getDetailsClient']);
 Route::post('searchUser', [UserController::class, 'searchUser']);
 Route::post('searchAdmin', [UserController::class, 'searchAdmin']);
+Route::post('userNotif', [UserController::class, 'sendNotification']); 
 
-Route::post('pushNotif', [NotificationController::class, 'sendNotification']);
+Route::post('pushNotif', [NotificationController::class, 'sendNotification']); 
 Route::post('searchNotif', [NotificationController::class, 'searchNotification']);
 Route::post('notifications', [NotificationController::class, 'store']);
 Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
@@ -61,6 +62,7 @@ Route::post('contrats/info', [ContratController::class, 'updateInfo']);
 Route::post('documents', [DocumentController::class, 'store']);
 Route::post('upload', [DocumentController::class, 'upload']);
 Route::post('uploadMobile', [DocumentController::class, 'uploadMobile']);
+Route::post('fileNotif', [DocumentController::class, 'sendNotification']); 
 
 Route::delete('documents/{id}', [DocumentController::class, 'destroy']);
 Route::get('documents/{id}', [DocumentController::class, 'getByContrat']);

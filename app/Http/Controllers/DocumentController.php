@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\Contrat;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
@@ -104,10 +105,8 @@ class DocumentController extends Controller
     }
 
     public function sendNotification(Request $request)
-    {
-        $title=$request->title;  
-        $message=$request->message;
-
+    { 
+        $message=$request->message; 
         $client = new Client();
         $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
         $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');

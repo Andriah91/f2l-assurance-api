@@ -115,7 +115,7 @@ class NotificationController extends Controller
 
             if ($statusCode === 200) {
                 $notif = new Notification();
-                $notif->createNotification($request->all());
+                $notif->createNotifiction($request->all());
             }
 
             return response()->json([

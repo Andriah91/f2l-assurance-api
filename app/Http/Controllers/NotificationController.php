@@ -44,7 +44,7 @@ class NotificationController extends Controller
     {
         try {
             $notif = new Notification();
-            $notif->createNotifiction($request->all());
+            $notif->createNotification($request->all());
             $response = $this->sendNotification($request);
             return response()->json($response);
         }catch (\Exception $e) {
@@ -80,7 +80,6 @@ class NotificationController extends Controller
     {
         $title=$request->title;
         $path=$request->path;
-        //$path="https://www.gala.fr/imgre/fit/~1~gal~2023~10~09~ea319e2e-a624-4e2a-b208-3b5f69444014.jpeg/2385x1849/quality/80/neymar.jpeg";
         $message=$request->message;
 
         $client = new Client();
@@ -91,6 +90,9 @@ class NotificationController extends Controller
             $postData = [
                 'app_id' => $oneSignalAppId,
                 'included_segments' => ['All'],
+                "filters" => [
+                    ["field" => "tag", "key" => "app", "relation" => "=", "value" => strtolower(getenv("APP_NAME"))]
+                ],
                 'contents' => [
                     'en' => $message,
                     'fr' => $message
@@ -115,10 +117,10 @@ class NotificationController extends Controller
 
             if ($statusCode === 200) {
                 $notif = new Notification();
-                $notif->createNotifiction($request->all());
+                $notif->createNotification($request->all());
             }
 
-            return response()->json([
+            return [
                 'status' => 'response',
                 'statusCode' => $statusCode,
                 'body' => $body

@@ -155,7 +155,8 @@ class AuthController extends Controller
                 'last_name' => $request->last_name,
                 'registration_number' => $request->registration_number,
                 'phone' => $request->phone,
-                'is_valid' => 1
+                'is_valid' => 0
+               // 'is_valid' => 1
             ]);
 
             $token = Auth::login($user);

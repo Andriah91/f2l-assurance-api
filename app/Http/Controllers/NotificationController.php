@@ -85,6 +85,7 @@ class NotificationController extends Controller
         $client = new Client();
         $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
         $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');
+
         try {
             $postData = [
                 'app_id' => $oneSignalAppId,
@@ -123,12 +124,13 @@ class NotificationController extends Controller
                 'status' => 'response',
                 'statusCode' => $statusCode,
                 'body' => $body
-            ];
+            ]);
+
         } catch (\Exception $e) {
-            [
+            return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
-            ];
+            ], 500);
         }
     }
 }

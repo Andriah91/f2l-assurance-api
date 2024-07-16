@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\Contrat;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
@@ -100,6 +101,53 @@ class DocumentController extends Controller
             return response()->json(['status' => 'success', 'documents' => $documents ,'contrat'=>$contrat]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function sendNotification(Request $request)
+    { 
+        $message=$request->message; 
+        $client = new Client();
+        $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
+        $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');
+
+        try {
+            $postData = [
+                'app_id' => $oneSignalAppId,
+                'included_segments' => ['All'],
+                'contents' => [
+                    'en' => $message,
+                    'fr' => $message
+                ]
+            ]; 
+
+            $response = $client->post('https://api.onesignal.com/notifications', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . $oneSignalAuthorize,
+                ],
+                'json' => $postData
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+
+            if ($statusCode === 200) {
+                $document = new Document();
+                $document->createDocument($request->all());
+            }
+
+            return response()->json([
+                'status' => 'response',
+                'statusCode' => $statusCode,
+                'body' => $body
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 

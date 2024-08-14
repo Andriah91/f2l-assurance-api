@@ -82,55 +82,7 @@ class NotificationController extends Controller
         $path=$request->path;
         $message=$request->message;
 
-        $client = new Client();
-        $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
-        $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');
-
-        try {
-            $postData = [
-                'app_id' => $oneSignalAppId,
-                'included_segments' => ['All'],
-                "filters" => [
-                    ["field" => "tag", "key" => "app", "relation" => "=", "value" => strtolower(getenv("APP_NAME"))]
-                ],
-                'contents' => [
-                    'en' => $message,
-                    'fr' => $message
-                ]
-            ];
-
-            if ($path != "path") {
-                $postData['ios_attachments'] = array('id'. time() => $path);
-                $postData['big_picture'] = $path;
-            }
-
-            $response = $client->post('https://api.onesignal.com/notifications', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Basic ' . $oneSignalAuthorize,
-                ],
-                'json' => $postData
-            ]);
-
-            $statusCode = $response->getStatusCode();
-            $body = $response->getBody()->getContents();
-
-            if ($statusCode === 200) {
-                $notif = new Notification();
-                $notif->createNotification($request->all());
-            }
-
-            return [
-                'status' => 'response',
-                'statusCode' => $statusCode,
-                'body' => $body
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $notif = new Notification();
+        return $notif->sendNotification($message, $path);
     }
 }

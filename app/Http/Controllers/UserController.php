@@ -129,6 +129,7 @@ class UserController extends Controller
     {
         try{
             $user = User::findOrFail($id);
+            $user['phone']  = str_replace("+33", "", $user['phone']);
             return response()->json(['status' => 'success', 'user' => $user]);
         }
         catch (\Exception $e) {
@@ -149,6 +150,9 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($request->id);
+            if(!str_contains($request->input('phone'), '+33'))
+                $request->merge(['phone'=> '+33'.$request->input('phone')]);
+
             $user->fill($request->only(['first_name',
             'last_name','email','is_admin','registration_number','phone','is_valid'
             ]));
@@ -265,50 +269,14 @@ class UserController extends Controller
     {
         $title=$request->title;  
         $message=$request->message; 
-        $client = new Client();
-        $oneSignalAppId = env('ONE_SIGNAL_APP_ID');
-        $oneSignalAuthorize = env('ONE_SIGNAL_AUTHORIZE');
 
-        try {
-            $postData = [
-                'app_id' => $oneSignalAppId,
-                'included_segments' => ['All'],
-                'contents' => [
-                    'en' => $message,
-                    'fr' => $message
-                ]
-            ]; 
-
-            $response = $client->post('https://api.onesignal.com/notifications', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Basic ' . $oneSignalAuthorize,
-                ],
-                'json' => $postData
-            ]);
-
-            $statusCode = $response->getStatusCode();
-            $body = $response->getBody()->getContents();
-
-            if ($statusCode === 200) {
-                $user = User::findOrFail($request->id);
-                $user->fill($request->only(['first_name',
-                'last_name','email','is_admin','registration_number','phone','is_valid'
-                ]));
-                $user->save();  
-            }
-
-            return response()->json([
-                'status' => 'response',
-                'statusCode' => $statusCode,
-                'body' => $body
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $user = User::findOrFail($request->id);
+        $user->fill($request->only(['first_name',
+        'last_name','email','is_admin','registration_number','phone','is_valid'
+        ]));
+        $user->save();  
+        
+        $notif = new Notification();
+        return $notif->sendNotification($message, null, $user->phone, false);
     }
 }

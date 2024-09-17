@@ -211,8 +211,10 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
-        'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
+       //'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        //'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
+        'OneSignal' => \Ladumor\OneSignal\OneSignal::class,
+
        // 'OneSignal' => \Ladumor\OneSignal\OneSignal::class,
 
         // 'ExampleClass' => App\Example\ExampleClass::class,

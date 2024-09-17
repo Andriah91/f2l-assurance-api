@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Models\Notification;
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Ladumor\OneSignal\OneSignal as OneSignalOneSignal;
+use onesignal\client\api\DefaultApi;
+use onesignal\client\Configuration;
+use OneSignal ;
+
 class NotificationController extends Controller
 {
 
-    public function __construct( Request $request)
+    public function __construct(Request $request)
     {
         $this->middleware('auth:api');
     }
@@ -24,13 +30,12 @@ class NotificationController extends Controller
             $limit = $request->input('limit');
             $notifs = Notification::query();
 
-                if ($param) {
-                    $notifs->where(function ($query) use ($param) {
-                        $query->where('title', 'like', "%$param%")
+            if ($param) {
+                $notifs->where(function ($query) use ($param) {
+                    $query->where('title', 'like', "%$param%")
                         ->orWhere('message', 'like', "%$param%");
-                    });
-
-                }
+                });
+            }
             $notifs->orderBy('id', 'desc');
             $notifCount = $notifs->count();
             $notifs = $notifs->skip($offset)->take($limit)->get();
@@ -48,31 +53,29 @@ class NotificationController extends Controller
             $notif = new Notification();
             $notif->createNotification($request->all());
             return response()->json(['status' => 'success', 'message' => 'Notification créé avec succès']);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function destroy($id)
     {
-        try{
+        try {
             $notif = new Notification();
             $notif->deleteNotification($id);
             return response()->json(['status' => 'success', 'message' => 'Notification supprimé avec succès']);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function updateInfo(Request $request)
     {
-        try{
+        try {
             $notif = new Notification();
             $artist = $notif->updateNotification($request->id, $request->all());
-            return response()->json(['status' => 'success', 'message' => 'Notification mis à jour avec succès'],200);
-        }
-        catch (\Exception $e) {
+            return response()->json(['status' => 'success', 'message' => 'Notification mis à jour avec succès'], 200);
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -132,4 +135,9 @@ class NotificationController extends Controller
             ], 500);
         }
     }
-}
+
+    function sendNotification2(Request $request)
+    {
+    }
+ }
+

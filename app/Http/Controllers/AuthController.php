@@ -42,7 +42,7 @@ class AuthController extends Controller
                 'first_name' => $validatedData['first_name'],
                 'last_name' => $validatedData['last_name'],
             ];
-
+/*
             $twilioSid = getenv("TWILIO_SID");
             $twilioToken = getenv("TWILIO_AUTH_TOKEN");
             $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
@@ -50,7 +50,7 @@ class AuthController extends Controller
 
             $verification = $twilio->verify->v2->services($twilio_verify_sid)
                 ->verifications
-                ->create($phoneNumber, "sms");
+                ->create($phoneNumber, "sms");*/
 
             return response()->json([
                 'status' => 'success',
@@ -125,7 +125,7 @@ class AuthController extends Controller
         try {
             $phonePrefix = env('PHONE_PREFIX');
             $phoneNumber =$phonePrefix . $request->phone ;
-            $otp = $request->opt_code;
+            /*$otp = $request->opt_code;
 
             $twilioSid = getenv("TWILIO_SID");
             $twilioToken = getenv("TWILIO_AUTH_TOKEN");
@@ -145,7 +145,7 @@ class AuthController extends Controller
                         'status' => 'error',
                         'message' => "LE CODE EST INVALIDE"
                     ],200);
-                }
+                }*/
 
             $user = User::create([
                 'is_admin' => 0,
@@ -180,6 +180,8 @@ class AuthController extends Controller
 
     public function loginClient(Request $request)
     {
+
+   
     try {
         $credentials = $request->only('registration_number','phone');
         $credentials['password']="client";
@@ -204,15 +206,15 @@ class AuthController extends Controller
         }
 
 
-        $twilioSid = getenv("TWILIO_SID");
+       /* $twilioSid = getenv("TWILIO_SID");
         $twilioToken = getenv("TWILIO_AUTH_TOKEN");
         $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
         $twilio = new Client($twilioSid, $twilioToken);
 
         $verification = $twilio->verify->v2->services($twilio_verify_sid)
             ->verifications
-            ->create($phoneNumber, "sms");
-
+            ->create($phoneNumber, "sms");*/
+         
             return response()->json([
                 'status' => 'SUCCESS',
                 'users' => $user,
@@ -234,7 +236,7 @@ public function validateLogin(Request $request)
     $credentials['password']="client";
     $token = Auth::attempt($credentials);
 
-    $twilioSid = getenv("TWILIO_SID");
+    /*$twilioSid = getenv("TWILIO_SID");
     $twilioToken = getenv("TWILIO_AUTH_TOKEN");
     $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
     $twilio = new Client($twilioSid, $twilioToken);
@@ -252,7 +254,7 @@ public function validateLogin(Request $request)
                 'status' => 'error',
                 'message' => "LE CODE EST INVALIDE"
             ],200);
-        }
+        }*/
         $user = Auth::user();
         $data= [
             'first_name' => $user->first_name,

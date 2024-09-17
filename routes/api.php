@@ -42,6 +42,8 @@ Route::post('searchUser', [UserController::class, 'searchUser']);
 Route::post('searchAdmin', [UserController::class, 'searchAdmin']);
 
 Route::post('pushNotif', [NotificationController::class, 'sendNotification']);
+Route::post('pushNotif2', [NotificationController::class, 'sendNotification2']);
+
 Route::post('searchNotif', [NotificationController::class, 'searchNotification']);
 Route::post('notifications', [NotificationController::class, 'store']);
 Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
@@ -70,6 +72,7 @@ Route::post('logout', [AuthController::class,'logout']);
 Route::post('refresh', [AuthController::class,'refresh']);
 Route::post('checkToken', [AuthController::class,'checkToken']);
 Route::post('logCli', [AuthController::class,'loginClient']);
+
 Route::post('validateLog', [AuthController::class,'validateLogin']);
 Route::post('registerCli', [AuthController::class,'registerClient']);
 Route::post('validateReg', [AuthController::class,'validateRegister']);

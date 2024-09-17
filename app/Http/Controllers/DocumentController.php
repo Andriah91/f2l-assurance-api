@@ -99,7 +99,7 @@ class DocumentController extends Controller
     {
         try {
             $contrat = Contrat::findOrFail($id);
-            $documents = Document::where('contrat_id', $id)->get();
+            $documents = Document::where('contrat_id', $id)->orderBy('id', 'desc')->get();
             return response()->json(['status' => 'success', 'documents' => $documents ,'contrat'=>$contrat]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

@@ -57,7 +57,7 @@ class Notification extends Model
                 $postData['filters'][] = ["field" => "tag", "key" => "phone", "relation" => "=", "value" => $user_id];
             }
 
-            if ($path != "path") {
+            if (isset($path)) {
                 $linkImg = env('SERVER_API_IMG').'/'.$path;
                 $postData['ios_attachments'] = array('id'. time() => $linkImg);
                 $postData['big_picture'] = $linkImg;

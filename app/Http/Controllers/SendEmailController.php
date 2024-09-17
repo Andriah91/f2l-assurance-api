@@ -32,7 +32,7 @@ class SendEmailController extends Controller
 
         Mail::to($mailToAddress)->send(new ContactFormMail($emailData));
 
-        return response()->json(['message' => 'Email envoyé avec succès'], 200);
+        return response()->json(['status' => 'success', 'message' => 'Email envoyé avec succès'], 200);
     }
 	
 	public function facturation(Request $request)
@@ -56,6 +56,6 @@ class SendEmailController extends Controller
 		
 		Mail::to($mailToAddress)->send(new FacturationFormMail($emailData));
 		
-        return response()->json(['message' => 'Email envoyé avec succès'], 200);
+        return response()->json(['status' => 'success', 'message' => 'Email envoyé avec succès'], 200);
 	}
 }

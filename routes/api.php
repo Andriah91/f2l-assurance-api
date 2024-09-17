@@ -11,6 +11,7 @@ use App\Http\Controllers\ContratController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicitiesController;
+use App\Http\Controllers\CartesController;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -73,6 +74,13 @@ Route::post('banieres', [PublicitiesController::class, 'store']);
 Route::delete('banieres/{id}', [PublicitiesController::class, 'destroy']);
 Route::get('banieres/{id}', [PublicitiesController::class, 'show']); 
 Route::post('banieres/info', [PublicitiesController::class, 'updateInfo']);
+
+Route::get('mescartes/{id}', [CartesController::class, 'showActive']);
+Route::post('searchcartes', [CartesController::class, 'searchCartes']);
+Route::post('cartes', [CartesController::class, 'store']);
+Route::delete('cartes/{id}', [CartesController::class, 'destroy']);
+Route::get('cartes/{id}', [CartesController::class, 'show']); 
+Route::post('cartes/info', [CartesController::class, 'updateInfo']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('registerClient', [AuthController::class, 'registerClientBO']);

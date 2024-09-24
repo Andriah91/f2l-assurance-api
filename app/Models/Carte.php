@@ -13,9 +13,12 @@ class Carte extends Model
         'titre',
         'is_active',
 		'path',
-        'client_id'
+        'user_id', 
     ];
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     
     public function createCarte($data)
     {

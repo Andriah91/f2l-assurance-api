@@ -267,6 +267,7 @@ class UserController extends Controller
     }
     public function sendNotification(Request $request)
     {
+        try {
         $title=$request->title;  
         $message=$request->message; 
 
@@ -278,5 +279,8 @@ class UserController extends Controller
         
         $notif = new Notification();
         return $notif->sendNotification($message, null, $user->phone, false);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

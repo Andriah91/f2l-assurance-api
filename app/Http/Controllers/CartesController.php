@@ -22,8 +22,7 @@ class CartesController extends Controller
             $param = $request->input('key');
             $offset = $request->input('offset');
             $limit = $request->input('limit');
-            $cartes = Carte::query();
-
+            $cartes = Carte::with('user');
                 if ($param) {
                     $cartes->where(function ($query) use ($param) {
                         $query->where('titre', 'like', "%$param%"); 
@@ -33,7 +32,7 @@ class CartesController extends Controller
             $cartes->orderBy('id', 'desc');
             $carteCount = $cartes->count();
             $cartes = $cartes->skip($offset)->take($limit)->get();
-            return response()->json(['status' => 'success', 'pubs' => $cartes, 'pubCount' => $carteCount]);
+            return response()->json(['status' => 'success', 'cartes' => $cartes, 'carteCount' => $carteCount]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -93,8 +92,8 @@ class CartesController extends Controller
     public function show($id)
     {
         try{
-            $carte = Carte::findOrFail($id);
-            return response()->json(['status' => 'success', 'pub' => $carte]);
+            $carte = Carte::with('user')->findOrFail($id); 
+            return response()->json(['status' => 'success', 'carte' => $carte]);
         }
         catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -105,7 +104,7 @@ class CartesController extends Controller
     {
         $clientID = $id;
         try {
-            $carte = Carte::where('is_active', 1)->where('client_id', $clientID)->get();
+            $carte = Carte::where('is_active', 1)->where('user_id', $clientID)->get();
             return response()->json(['status' => 'success', 'cartes' => $carte]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -146,7 +145,7 @@ class CartesController extends Controller
         try{
             $cartes = new Carte();
             $cartes->deleteCarte($id);
-            return response()->json(['status' => 'success', 'message' => 'La publicité est supprimée avec succès']);
+            return response()->json(['status' => 'success', 'message' => 'La carte est supprimée avec succès']);
         }
         catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

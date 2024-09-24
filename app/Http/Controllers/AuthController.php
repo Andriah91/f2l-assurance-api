@@ -329,7 +329,7 @@ public function validateLogin(Request $request)
      */
     public function register(Request $request)
     {
-       // try {
+        try {
 
                 $request->validate([
                     'email' => 'required|string|email|max:255|unique:users',
@@ -369,12 +369,12 @@ public function validateLogin(Request $request)
                 ]
             ]);
 
-        // } catch (\Illuminate\Validation\ValidationException $exception) {
-        //     $firstError = $exception->validator->getMessageBag()->first();
-        //     return response()->json(['error' => $firstError], 422);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
+          } catch (\Illuminate\Validation\ValidationException $exception) {
+         $firstError = $exception->validator->getMessageBag()->first();
+             return response()->json(['error' => $firstError], 422);
+         } catch (\Exception $e) {
+             return response()->json(['error' => $e->getMessage()], 500);
+         }
     }
 
 

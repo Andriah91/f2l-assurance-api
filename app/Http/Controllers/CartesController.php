@@ -24,12 +24,15 @@ class CartesController extends Controller
             $offset = $request->input('offset');
             $limit = $request->input('limit');
             $cartes = Carte::with('user');
-                if ($param) {
-                    $cartes->where(function ($query) use ($param) {
-                        $query->where('titre', 'like', "%$param%"); 
-                    });
-
-                }
+            if ($param) {
+                $cartes->where(function ($query) use ($param) {
+                    $query->where('titre', 'like', "%$param%")
+                          ->orWhereHas('user', function ($query) use ($param) {
+                              $query->where('first_name', 'like', "%$param%")
+                                    ->orWhere('last_name', 'like', "%$param%");
+                          });
+                });
+            }
             $cartes->orderBy('id', 'desc');
             $carteCount = $cartes->count();
             $cartes = $cartes->skip($offset)->take($limit)->get();

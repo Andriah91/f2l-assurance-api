@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Notification;
 
 class UserController extends Controller
 {

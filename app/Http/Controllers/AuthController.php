@@ -371,10 +371,10 @@ public function validateLogin(Request $request)
 
           } catch (\Illuminate\Validation\ValidationException $exception) {
          $firstError = $exception->validator->getMessageBag()->first();
-             return response()->json(['error' => $firstError], 422);
+            return response()->json(['error' => $firstError], 422);
          } catch (\Exception $e) {
              return response()->json(['error' => $e->getMessage()], 500);
-         }
+        }
     }
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carte;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 use Closure;
@@ -23,12 +24,15 @@ class CartesController extends Controller
             $offset = $request->input('offset');
             $limit = $request->input('limit');
             $cartes = Carte::with('user');
-                if ($param) {
-                    $cartes->where(function ($query) use ($param) {
-                        $query->where('titre', 'like', "%$param%"); 
-                    });
-
-                }
+            if ($param) {
+                $cartes->where(function ($query) use ($param) {
+                    $query->where('titre', 'like', "%$param%")
+                          ->orWhereHas('user', function ($query) use ($param) {
+                              $query->where('first_name', 'like', "%$param%")
+                                    ->orWhere('last_name', 'like', "%$param%");
+                          });
+                });
+            }
             $cartes->orderBy('id', 'desc');
             $carteCount = $cartes->count();
             $cartes = $cartes->skip($offset)->take($limit)->get();
@@ -148,6 +152,23 @@ class CartesController extends Controller
             return response()->json(['status' => 'success', 'message' => 'La carte est supprimée avec succès']);
         }
         catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    public function sendNotification(Request $request)
+    {
+        try {
+        $title=$request->title;  
+        $message=$request->message; 
+
+        $carte = Carte::findOrFail($request->id);
+        $carte->fill($request->all());
+
+        $carte->save();  
+        
+        $notif = new Notification();
+        return $notif->sendNotification($message, null, $request->phone, false);
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

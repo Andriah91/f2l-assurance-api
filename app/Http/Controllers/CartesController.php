@@ -6,6 +6,13 @@ use App\Models\Carte;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
+use App\Mail\ContactFormMail;
+use App\Mail\FacturationFormMail;
+use App\Mail\SendMail;
+use App\Mail\DemoEmail;
+use Illuminate\Support\Facades\Mail;
+
+
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
@@ -156,6 +163,49 @@ class CartesController extends Controller
         }
     }
     public function sendNotification(Request $request)
+    { 
+        try {
+        $notif = new Notification();
+        $statusOptions = ['désactivée', 'activée']; 
+        $title=$request->title;  
+        $message=$request->message;  
+        if($request->id==null) {
+            $cartes = new Carte();
+            $cartes->createCarte($request->all()); 
+            if($request->is_active==1)
+            {
+                $notif->sendNotification($message, null, $request->phone, false);
+                $mailToAddress = env('MAIL_FROM_ADDRESS');  
+                $emailData = [
+                   'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
+                    'email' => $request->user()->email,
+                    'phone' => $request->user()->phone ?? '', 
+                    $message = "Votre carte a été " . $statusOptions[$request->is_active] 
+                ]; 
+                Mail::to($mailToAddress)->send(new ContactFormMail($emailData));
+            }
+        }else{ 
+            $carte = Carte::findOrFail($request->id);
+            $isSending = $carte->is_active; 
+            $carte->fill($request->all()); 
+            $carte->save();  
+            if($isSending!=$request->is_active){
+                $notif->sendNotification($message, null, $request->phone, false);
+                $mailToAddress = env('MAIL_FROM_ADDRESS');  
+                $emailData = [
+                    'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
+                    'email' =>$request->user()->email,
+                    'phone' => $request->user()->phone ?? '', 
+                    $message = "Votre carte a été " . $statusOptions[$request->is_active] 
+                ]; 
+                Mail::to($mailToAddress)->send(new ContactFormMail($emailData));
+            }
+        }  
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+   /* public function sendNotification(Request $request)
     {
         try {
         $title=$request->title;  
@@ -171,5 +221,5 @@ class CartesController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-    }
+    }*/
 }

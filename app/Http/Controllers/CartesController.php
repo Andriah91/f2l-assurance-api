@@ -167,7 +167,7 @@ class CartesController extends Controller
         $carte->save();  
         
         $notif = new Notification();
-        return $notif->sendNotification($message, null, $request->phone, false);
+        return $notif->sendNotification($message, null, $request->user['phone'], false);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

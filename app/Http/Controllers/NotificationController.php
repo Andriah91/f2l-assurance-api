@@ -81,8 +81,15 @@ class NotificationController extends Controller
         $title=$request->title;
         $path=$request->path;
         $message=$request->message;
+        $users = $request->users;
+        $phones = array();
+        if(isset($users)){
+            foreach($users as $p){
+                $phones[]= $p['phone'];
+            }
+        }
 
         $notif = new Notification();
-        return $notif->sendNotification($message, $path);
+        return $notif->sendNotification($message, $path, $phones);
     }
 }

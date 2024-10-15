@@ -41,6 +41,7 @@ Route::post('users/password/{id}', [UserController::class, 'updatePassword']);
 Route::get('clients', [UserController::class, 'findAllClients']);
 Route::get('clientInfo/{id}', [UserController::class, 'getDetailsClient']);
 Route::post('searchUser', [UserController::class, 'searchUser']);
+Route::post('searchClient', [UserController::class, 'searchClient']);
 Route::post('searchAdmin', [UserController::class, 'searchAdmin']);
 Route::post('userNotif', [UserController::class, 'sendNotification']); 
 
@@ -81,6 +82,7 @@ Route::post('cartes', [CartesController::class, 'store']);
 Route::delete('cartes/{id}', [CartesController::class, 'destroy']);
 Route::get('cartes/{id}', [CartesController::class, 'show']); 
 Route::post('cartes/info', [CartesController::class, 'updateInfo']);
+Route::post('cardNotif', [CartesController::class, 'sendNotification']); 
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('registerClient', [AuthController::class, 'registerClientBO']);

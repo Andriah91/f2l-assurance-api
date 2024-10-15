@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Notification;
 
 class UserController extends Controller
 {
@@ -94,6 +95,34 @@ class UserController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function searchClient(Request $request)
+    {
+        try {
+            $param = $request->input('key');
+            $offset = $request->input('offset');
+            $limit = $request->input('limit');
+            $users = new User();
+            
+                if ($param) {
+                    $users->where(function ($query) use ($param) {
+                        $query->where('phone', 'like', "%$param%")
+                        ->orWhere('first_name', 'like', "%$param%")
+                        ->orWhere('registration_number', 'like', "%$param%")
+                        ->orWhere('last_name', 'like', "%$param%");
+                    });
+
+                }
+            $users->where('is_admin', 0);
+            $users->orderBy('id', 'desc');
+            $userCount = $users->count();
+            $users = $users->skip($offset)->take($limit)->get();
+            return response()->json(['status' => 'success', 'users' => $users, 'userCount' => $userCount]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function searchAdmin(Request $request)
     {
         try {
@@ -267,6 +296,7 @@ class UserController extends Controller
     }
     public function sendNotification(Request $request)
     {
+        try {
         $title=$request->title;  
         $message=$request->message; 
 
@@ -278,5 +308,8 @@ class UserController extends Controller
         
         $notif = new Notification();
         return $notif->sendNotification($message, null, $user->phone, false);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

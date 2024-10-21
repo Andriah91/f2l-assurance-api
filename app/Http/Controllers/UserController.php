@@ -72,9 +72,13 @@ class UserController extends Controller
         try {
             $param = $request->input('key');
             $offset = $request->input('offset');
-            $limit = $request->input('limit');
-            $users = User::with('contrats');
-            
+            $limit = $request->input('limit'); 
+            $users = User::with([
+                'contrats',
+                'cartes' => function ($query) {
+                    $query->where('is_active', 1);
+                }
+            ]); 
                 if ($param) {
                     $users->where(function ($query) use ($param) {
                         $query->where('phone', 'like', "%$param%")
@@ -83,8 +87,7 @@ class UserController extends Controller
                         ->orWhere('last_name', 'like', "%$param%");
                     })->orWhereHas('contrats', function ($query) use ($param) {
                         $query->where('title', 'like', "%$param%");
-                    });
-
+                    }); 
                 }
             $users->where('is_admin', 0);
             $users->orderBy('id', 'desc');

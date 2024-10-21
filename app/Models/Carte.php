@@ -20,6 +20,7 @@ class Carte extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     
+    
     public function createCarte($data)
     {
         return $this->create($data);
@@ -38,4 +39,12 @@ class Carte extends Model
         $contrat->update($data);
         return $contrat;
     }
+    public static function findCardByUserId($userId)
+    {
+        return self::where('user_id', $userId)
+                    ->where('is_active', 1)  
+                    ->get();  
+    }
+    
+
 }

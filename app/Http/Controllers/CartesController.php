@@ -6,10 +6,7 @@ use App\Models\Carte;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
-use App\Mail\ContactFormMail;
-use App\Mail\FacturationFormMail;
-use App\Mail\SendMail;
-use App\Mail\DemoEmail;
+use App\Mail\CarteFormMail;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -172,7 +169,7 @@ class CartesController extends Controller
         $cartes = Carte::findCardByUserId($request->user_id);
         if($cartes->count()>0)
         { 
-            $error="Le client a possède dejà une carte";
+            $error="Le client possède dejà une carte";
             return response()->json(['error' => $error], 422);
         }
         if($request->id==null) {
@@ -186,12 +183,14 @@ class CartesController extends Controller
                 $notif->sendNotification($message, null, $request->phone, false);
                 $mailToAddress = $request->user()->email;  
                 $emailData = [
-                   'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
+                    'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
                     'email' => $request->user()->email,
                     'phone' => $request->user()->phone ?? '', 
-                    $message = "Votre carte a été " . $statusOptions[$request->is_active] 
+                    'message' => "Votre carte a été " . $statusOptions[$request->is_active],
+                    'carte' => $request->titre,
+                    'path' => $request->path,
                 ]; 
-                Mail::to($mailToAddress)->send(new ContactFormMail($emailData));
+                Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
             }
         }else{ 
             $carte = Carte::findOrFail($request->id);
@@ -205,9 +204,11 @@ class CartesController extends Controller
                     'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
                     'email' =>$request->user()->email,
                     'phone' => $request->user()->phone ?? '', 
-                    $message = "Votre carte a été " . $statusOptions[$request->is_active] 
+                    'message' => "Votre carte a été " . $statusOptions[$request->is_active],
+                    'carte' => $request->titre,
+                    'path' => $request->path,
                 ]; 
-                Mail::to($mailToAddress)->send(new ContactFormMail($emailData));
+                Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
             }
         } 
         } catch (\Exception $e) {

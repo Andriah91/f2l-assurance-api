@@ -164,14 +164,23 @@ class CartesController extends Controller
     }
     public function sendNotification(Request $request)
     { 
-        try {
+        try { 
         $notif = new Notification();
         $statusOptions = ['désactivée', 'activée']; 
         $title=$request->title;  
         $message=$request->message;  
+        $cartes = Carte::findCardByUserId($request->user_id);
+        if($cartes->count()>0)
+        { 
+            $error="Le client a possède dejà une carte";
+            return response()->json(['error' => $error], 422);
+        }
         if($request->id==null) {
+            $cartes = Carte::findCardByUserId($request->user()->id);
+                
             $cartes = new Carte();
             $cartes->createCarte($request->all()); 
+
             if($request->is_active==1)
             {
                 $notif->sendNotification($message, null, $request->phone, false);
@@ -200,7 +209,7 @@ class CartesController extends Controller
                 ]; 
                 Mail::to($mailToAddress)->send(new ContactFormMail($emailData));
             }
-        }  
+        } 
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

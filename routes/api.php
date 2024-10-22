@@ -12,6 +12,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicitiesController;
 use App\Http\Controllers\CartesController;
+use App\Http\Controllers\ImportController;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -98,6 +99,8 @@ Route::post('validateReg', [AuthController::class,'validateRegister']);
 
 Route::post('optCode', [OtpController::class,'sendOtpCode']);
 Route::post('verifyCode', [OtpController::class,'verifyOTP']);
+
+Route::post('import', [ImportController::class, 'index']);
 
 
 

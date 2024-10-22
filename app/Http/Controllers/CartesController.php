@@ -175,7 +175,7 @@ class CartesController extends Controller
             if($request->is_active==1)
             {
                 $notif->sendNotification($message, null, $request->phone, false);
-                $mailToAddress = env('MAIL_FROM_ADDRESS');  
+                $mailToAddress = $request->user()->email;  
                 $emailData = [
                    'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
                     'email' => $request->user()->email,
@@ -191,7 +191,7 @@ class CartesController extends Controller
             $carte->save();  
             if($isSending!=$request->is_active){
                 $notif->sendNotification($message, null, $request->phone, false);
-                $mailToAddress = env('MAIL_FROM_ADDRESS');  
+                $mailToAddress = $request->user()->email;  
                 $emailData = [
                     'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
                     'email' =>$request->user()->email,

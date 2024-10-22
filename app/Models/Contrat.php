@@ -9,6 +9,7 @@ class Contrat extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'numero',
         'title',
         'creation_date',
         'user_id'

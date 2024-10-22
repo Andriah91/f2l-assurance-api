@@ -70,6 +70,7 @@ class Notification extends Model
                 $linkImg = env('SERVER_API_IMG').'/'.$path;
                 $postData['ios_attachments'] = array('id'. time() => $linkImg);
                 $postData['big_picture'] = $linkImg;
+                $postData['data'] = array('image' => $linkImg);
             }
 
             $response = $client->post('https://api.onesignal.com/notifications', [

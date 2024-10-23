@@ -84,6 +84,7 @@ class UserController extends Controller
                         $query->where('phone', 'like', "%$param%")
                         ->orWhere('first_name', 'like', "%$param%")
                         ->orWhere('registration_number', 'like', "%$param%")
+                        ->orWhere('email', 'like', "%$param%")
                         ->orWhere('last_name', 'like', "%$param%");
                     })->orWhereHas('contrats', function ($query) use ($param) {
                         $query->where('title', 'like', "%$param%");
@@ -194,6 +195,10 @@ class UserController extends Controller
         } catch (\Illuminate\Validation\ValidationException $exception) {
             $firstError = $exception->validator->getMessageBag()->first();
             return response()->json(['error' => $firstError], 422);
+        } 
+        catch (QueryException $exception) {  
+            return response()->json(['error' => $exception->getMessage()], 409);
+        
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }

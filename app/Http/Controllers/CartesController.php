@@ -166,21 +166,19 @@ class CartesController extends Controller
         $statusOptions = ['désactivée', 'activée']; 
         $title=$request->title;  
         $message=$request->message;  
-        $cartes = Carte::findCardByUserId($request->user_id);
-        if($cartes->count()>0)
-        { 
-            $error="Le client possède dejà une carte";
-            return response()->json(['error' => $error], 422);
-        }
+        $cartes = Carte::findCardByUserId($request->user_id); 
         if($request->id==null) {
-            $cartes = Carte::findCardByUserId($request->user()->id);
-                
+            if($cartes->count()>0)
+            { 
+                $error="Le client possède dejà une carte";
+                return response()->json(['error' => $error], 422);
+            }
+            $cartes = Carte::findCardByUserId($request->user()->id); 
             $cartes = new Carte();
             $cartes->createCarte($request->all()); 
 
             if($request->is_active==1)
-            {
-                $notif->sendNotification($message, null, $request->phone, false);
+            { 
                 $mailToAddress = $request->user()->email;  
                 $emailData = [
                     'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
@@ -191,14 +189,14 @@ class CartesController extends Controller
                     'path' => $request->path,
                 ]; 
                 Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
+                $notif->sendNotification($message, null, $request->phone, false);
             }
         }else{ 
             $carte = Carte::findOrFail($request->id);
             $isSending = $carte->is_active; 
             $carte->fill($request->all()); 
             $carte->save();  
-            if($isSending!=$request->is_active){
-                $notif->sendNotification($message, null, $request->phone, false);
+            if($isSending!=$request->is_active){ 
                 $mailToAddress = $request->user()->email;  
                 $emailData = [
                     'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
@@ -209,6 +207,7 @@ class CartesController extends Controller
                     'path' => $request->path,
                 ]; 
                 Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
+                $notif->sendNotification($message, null, $request->phone, false);
             }
         } 
         } catch (\Exception $e) {

@@ -161,59 +161,63 @@ class CartesController extends Controller
     }
     public function sendNotification(Request $request)
     { 
+      
         try { 
         $notif = new Notification();
         $statusOptions = ['désactivée', 'activée']; 
         $title=$request->title;  
         $message=$request->message;  
-        $cartes = Carte::findCardByUserId($request->user_id);
-        if($cartes->count()>0)
-        { 
-            $error="Le client possède dejà une carte";
-            return response()->json(['error' => $error], 422);
-        }
+        $cartes = Carte::findCardByUserId($request->user_id); 
         if($request->id==null) {
-            $cartes = Carte::findCardByUserId($request->user()->id);
-                
+            if($cartes->count()>0)
+            { 
+                $error="Le client possède dejà une carte";
+                return response()->json(['error' => $error], 422);
+            }
+            $userData = $request->get('user');
+            $cartes = Carte::findCardByUserId($userData['id']); 
             $cartes = new Carte();
             $cartes->createCarte($request->all()); 
 
             if($request->is_active==1)
-            {
-                $notif->sendNotification($message, null, $request->phone, false);
-                $mailToAddress = $request->user()->email;  
+            {  
+                $mailToAddress =$userData['email'];  
                 $emailData = [
-                    'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
-                    'email' => $request->user()->email,
-                    'phone' => $request->user()->phone ?? '', 
+                    'nom' => $userData['first_name'] . ' ' . $userData['last_name'],  
+                    'email' => $userData['email'],  
+                    'phone' => $userData['phone'] ?? '',   
                     'message' => "Votre carte a été " . $statusOptions[$request->is_active],
                     'carte' => $request->titre,
                     'path' => $request->path,
-                ]; 
+                ];
                 Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
+                $notif->sendNotification($message, null, $request->phone, false);
             }
         }else{ 
             $carte = Carte::findOrFail($request->id);
             $isSending = $carte->is_active; 
             $carte->fill($request->all()); 
             $carte->save();  
-            if($isSending!=$request->is_active){
-                $notif->sendNotification($message, null, $request->phone, false);
-                $mailToAddress = $request->user()->email;  
+            if($isSending!=$request->is_active){  
+                $userData = $request->get('user');
+                $mailToAddress = $userData['email']; 
                 $emailData = [
-                    'nom' => $request->user()->first_name . ' ' . $request->user()->last_name,
-                    'email' =>$request->user()->email,
-                    'phone' => $request->user()->phone ?? '', 
-                    'message' => "Votre carte a été " . $statusOptions[$request->is_active],
-                    'carte' => $request->titre,
-                    'path' => $request->path,
-                ]; 
+                    'nom' => $userData['first_name'] . ' ' . $userData['last_name'],  // Utiliser $userData pour nom complet
+                    'email' => $userData['email'],  // Utiliser $userData pour email
+                    'phone' => $userData['phone'] ?? '',  // Utiliser $userData pour téléphone (si disponible)
+                    'message' => "Votre carte a été " . $statusOptions[$request->is_active],  // Message de statut
+                    'carte' => $request->titre,  // Titre de la carte venant de la requête
+                    'path' => $request->path,  // Chemin de l'image ou du fichier venant de la requête
+                ];
                 Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
+                $notif->sendNotification($message, null, $request->phone, false);
             }
+                
         } 
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+      
     }
    /* public function sendNotification(Request $request)
     {

@@ -30,9 +30,7 @@ class CarteFormMail extends Mailable
      */
     public function build()
     {
-             return $this->from("jrmanouhoseah@gmail.com")
-                    ->subject('Carte tiers')
-                    ->view('contact');
+             return $this->subject('Carte tiers')->view('cartetier');
     }
 
 }

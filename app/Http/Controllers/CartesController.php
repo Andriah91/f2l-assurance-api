@@ -186,12 +186,12 @@ class CartesController extends Controller
                     'nom' => $userData['first_name'] . ' ' . $userData['last_name'],  
                     'email' => $userData['email'],  
                     'phone' => $userData['phone'] ?? '',   
-                    'message' => "Votre carte a été " . $statusOptions[$request->is_active],
+                    'message' => "Votre carte a ".$request->titre." été " . $statusOptions[$request->is_active],
                     'carte' => $request->titre,
                     'path' => $request->path,
                 ];
                 Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
-                $notif->sendNotification($message, null, $request->phone, false);
+                $notif->sendNotification($message, null, $userData['phone'], false);
             }
         }else{ 
             $carte = Carte::findOrFail($request->id);
@@ -205,12 +205,12 @@ class CartesController extends Controller
                     'nom' => $userData['first_name'] . ' ' . $userData['last_name'],  // Utiliser $userData pour nom complet
                     'email' => $userData['email'],  // Utiliser $userData pour email
                     'phone' => $userData['phone'] ?? '',  // Utiliser $userData pour téléphone (si disponible)
-                    'message' => "Votre carte a été " . $statusOptions[$request->is_active],  // Message de statut
+                    'message' => "Votre carte ".$request->titre." a été " . $statusOptions[$request->is_active],  // Message de statut
                     'carte' => $request->titre,  // Titre de la carte venant de la requête
                     'path' => $request->path,  // Chemin de l'image ou du fichier venant de la requête
                 ];
                 Mail::to($mailToAddress)->send(new CarteFormMail($emailData));
-                $notif->sendNotification($message, null, $request->phone, false);
+                $notif->sendNotification($message, null, $userData['phone'], false);
             }
                 
         } 

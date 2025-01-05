@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Carte;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 use App\Mail\CarteFormMail;
@@ -174,7 +175,7 @@ class CartesController extends Controller
                 $error="Le client possède dejà une carte";
                 return response()->json(['error' => $error], 422);
             }
-            $userData = $request->get('user');
+            $userData = User::findOrFail($request->user_id);
             $cartes = Carte::findCardByUserId($userData['id']); 
             $cartes = new Carte();
             $cartes->createCarte($request->all()); 
@@ -186,7 +187,7 @@ class CartesController extends Controller
                     'nom' => $userData['first_name'] . ' ' . $userData['last_name'],  
                     'email' => $userData['email'],  
                     'phone' => $userData['phone'] ?? '',   
-                    'message' => "Votre carte a ".$request->titre." été " . $statusOptions[$request->is_active],
+                    'message' => "Votre carte ".$request->titre." a été " . $statusOptions[$request->is_active],
                     'carte' => $request->titre,
                     'path' => $request->path,
                 ];

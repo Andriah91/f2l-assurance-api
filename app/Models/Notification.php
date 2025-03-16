@@ -33,7 +33,7 @@ class Notification extends Model
         return $notif;
     }
 
-    public function sendNotification($message, $path, $user_id = null, $is_to_save = true)
+    public function sendNotification($message, $path, $user_phone = null, $is_to_save = true)
     {
 
         $client = new Client();
@@ -53,14 +53,24 @@ class Notification extends Model
                 ]
             ];
 
-            if(isset($user_id)){
-                $postData['filters'][] = ["field" => "tag", "key" => "phone", "relation" => "=", "value" => $user_id];
+            if(isset($user_phone)){
+                if(is_array($user_phone)){
+                    foreach($user_phone as $k => $val){
+                        $postData['filters'][] = ["field" => "tag", "key" => "phone", "relation" => "=", "value" => $val];
+                        if ($k !== array_key_last($user_phone)) {
+                            $postData['filters'][] = ["operator" => "OR"];
+                        }
+                    }
+                }else{
+                    $postData['filters'][] = ["field" => "tag", "key" => "phone", "relation" => "=", "value" => $user_phone];
+                }
             }
 
             if (isset($path)) {
                 $linkImg = env('SERVER_API_IMG').'/'.$path;
                 $postData['ios_attachments'] = array('id'. time() => $linkImg);
                 $postData['big_picture'] = $linkImg;
+                $postData['data'] = array('image' => $linkImg);
             }
 
             $response = $client->post('https://api.onesignal.com/notifications', [

@@ -98,7 +98,7 @@ class AuthController extends Controller
             $user = User::create([
                 'is_admin' => 0,
                 'email' => $request->email,
-                'password' => Hash::make("client"),
+                'password' => Hash::make($request->phone),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'registration_number' => $request->registration_number,
@@ -150,7 +150,7 @@ class AuthController extends Controller
             $user = User::create([
                 'is_admin' => 0,
                 'email' => $request->email,
-                'password' => Hash::make("client"),
+                'password' => Hash::make($request->phone),
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'registration_number' => $request->registration_number,
@@ -183,7 +183,7 @@ class AuthController extends Controller
     {
     try {
         $credentials = $request->only('registration_number','phone');
-        $credentials['password']="client";
+        $credentials['password']= $request->phone;
         $phoneNumber = $this->_setPhonePrefix($request->phone);
 
         $token = Auth::attempt($credentials);
@@ -329,7 +329,7 @@ public function validateLogin(Request $request)
      */
     public function register(Request $request)
     {
-       // try {
+        try {
 
                 $request->validate([
                     'email' => 'required|string|email|max:255|unique:users',
@@ -369,12 +369,12 @@ public function validateLogin(Request $request)
                 ]
             ]);
 
-        // } catch (\Illuminate\Validation\ValidationException $exception) {
-        //     $firstError = $exception->validator->getMessageBag()->first();
-        //     return response()->json(['error' => $firstError], 422);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
+          } catch (\Illuminate\Validation\ValidationException $exception) {
+         $firstError = $exception->validator->getMessageBag()->first();
+            return response()->json(['error' => $firstError], 422);
+         } catch (\Exception $e) {
+             return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
 

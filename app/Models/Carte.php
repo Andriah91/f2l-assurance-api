@@ -13,9 +13,13 @@ class Carte extends Model
         'titre',
         'is_active',
 		'path',
-        'client_id'
+        'user_id', 
     ];
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    
     
     public function createCarte($data)
     {
@@ -35,4 +39,12 @@ class Carte extends Model
         $contrat->update($data);
         return $contrat;
     }
+    public static function findCardByUserId($userId)
+    {
+        return self::where('user_id', $userId)
+                    ->where('is_active', 1)  
+                    ->get();  
+    }
+    
+
 }

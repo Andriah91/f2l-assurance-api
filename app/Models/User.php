@@ -34,6 +34,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Contrat::class);
     }
+    
+    public function cartes()
+    {
+        return $this->hasMany(Carte::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
